@@ -1,0 +1,18 @@
+= GlassUI
+
+Note: Deep in development, not ready for use yet.
+
+GlassUI basically tries to reproduce the look of the https://hyprland.org/hall_of_fame/[hot linux setups] that you see every now and then on Windows(only latest will be actively supported).
+
+.Roadmap (sorted by priority and feasibility):
+- [ ] Replacing the taskbar (and add a lot more features)
+- [ ] Making window transparency settable
+- [ ] Creating custom desktop backgrounds
+- [ ] Creating a Minecraft-like resource pack manager which can replace the frontend
+- [ ] Add optional screen effects (for example a beating depending on the music)
+- [ ] Replacing the start and search menu
+- [ ] Replacing the file explorer
+- [ ] Replacing the tab switching menu
+- [ ] Replacing the text editor
+- [ ] Creating a twm
+- [ ] Replacing the default window decoration
