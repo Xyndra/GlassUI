@@ -1,0 +1,21 @@
+[package]
+name = "glassui"
+version = "0.1.0"
+description = "GlassUI"
+authors = ["Xyndra"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+skia-safe = {version = "0.78.2", features = ["all-windows"]}
+glutin = "0.32.0"
+glutin-winit = "0.5.0"
+raw-window-handle = "0.6.0"
+gl-rs = { version = "0.14.0", package = "gl" }
+winit = "0.30.2"
+
+[profile.dev]
+incremental = true
+
+[profile.release]
+incremental = true

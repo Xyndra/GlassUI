@@ -4,7 +4,7 @@ Note: Deep in development, not ready for use yet.
 
 GlassUI basically tries to reproduce the look of the https://hyprland.org/hall_of_fame/[hot linux setups] that you see every now and then on Windows(only latest will be actively supported).
 
-.Roadmap (sorted by priority and feasibility):
+== Roadmap (sorted by priority and feasibility):
 - [ ] Replacing the taskbar (and add a lot more features)
 - [ ] Making window transparency settable
 - [ ] Creating custom desktop backgrounds
@@ -15,4 +15,12 @@ GlassUI basically tries to reproduce the look of the https://hyprland.org/hall_o
 - [ ] Replacing the tab switching menu
 - [ ] Replacing the text editor
 - [ ] Creating a twm
+- [ ] Replacing the cursor
 - [ ] Replacing the default window decoration
+
+== Developing
+I am very sorry for the long compile times, but this is the dependencies fault. For me, it takes
+~20 minutes to compile the project. The library says that this should not happen because it is
+supposed to be shipped with precompiled binaries, but it does not work for me. I hope you are
+more lucky than me, but I can do absolutely nothing about it. Please complain to the skia bindings
+maintainers if you are also experiencing this issue.
