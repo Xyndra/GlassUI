@@ -122,7 +122,7 @@ impl ApplicationHandler for Application {
             _ => (),
         }
 
-        let expected_frame_length_seconds = 1.0 / 20.0;
+        let expected_frame_length_seconds = 1.0 / 30.0;
         let frame_duration = Duration::from_secs_f32(expected_frame_length_seconds);
 
         if frame_start - self.previous_frame_start > frame_duration {

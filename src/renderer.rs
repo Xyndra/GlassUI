@@ -1,8 +1,6 @@
-// Author: Alberto González Palomo https://sentido-labs.com
-// ©2019 Alberto González Palomo https://sentido-labs.com
-// Released under the MIT license: https://opensource.org/licenses/MIT
-#![allow(unknown_lints)]
-#![allow(clippy::unusual_byte_groupings)]
+// Original Author: Alberto González Palomo https://sentido-labs.com
+// See git history for license
+
 use skia_safe::{
     gradient_shader, Color, Matrix, Paint, PaintJoin, PaintStyle, Path, Point, TileMode,
 };
@@ -12,6 +10,8 @@ const PI: f32 = std::f32::consts::PI;
 const DEGREES_IN_RADIANS: f32 = PI / 180.0;
 const PEN_SIZE: f32 = 1.0;
 
+/// The `point_in_circle` function calculates the coordinates of a point in a circle given the
+/// center, radius, and angle in radians.
 fn point_in_circle(center: (f32, f32), radius: f32, radians: f32) -> (f32, f32) {
     (
         center.0 + radius * radians.cos(),
@@ -135,7 +135,7 @@ fn chain_ring(
     paint.set_stroke_width(PEN_SIZE.max(canvas.image_info().dimensions().width as f32 / 360.0));
 
     let center = (0, 0);
-    let c = (center.0 as f32, center.1 as f32);
+    let float_center = (center.0 as f32, center.1 as f32);
     let outer_radius = radius as f32;
     let inner_radius = outer_radius * 0.73;
     let ridge_radius = outer_radius * 0.85;
@@ -146,23 +146,23 @@ fn chain_ring(
 
     let mut alpha = PI / 2.0;
     let mut path = Path::new();
-    for i in 0..teeth_count {
-        let mut a = alpha - delta / 2.0 + teeth_bottom_gap / 2.0;
-        let v = point_in_circle(c, outer_radius - teeth_length, a);
-        if i == 0 {
-            path.move_to(v);
+    for tooth_index in 0..teeth_count {
+        let mut angle = alpha - delta / 2.0 + teeth_bottom_gap / 2.0;
+        let tip = point_in_circle(float_center, outer_radius - teeth_length, angle);
+        if tooth_index == 0 {
+            path.move_to(tip);
         } else {
-            path.line_to(v);
+            path.line_to(tip);
         }
-        let middle = a + (delta - teeth_bottom_gap) / 2.0;
-        a += delta - teeth_bottom_gap;
+        let middle = angle + (delta - teeth_bottom_gap) / 2.0;
+        angle += delta - teeth_bottom_gap;
         path.cubic_to(
-            point_in_circle(c, outer_radius * 1.035, middle),
-            point_in_circle(c, outer_radius * 1.035, middle),
-            point_in_circle(c, outer_radius - teeth_length, a),
+            point_in_circle(float_center, outer_radius * 1.035, middle),
+            point_in_circle(float_center, outer_radius * 1.035, middle),
+            point_in_circle(float_center, outer_radius - teeth_length, angle),
         );
-        a += teeth_bottom_gap;
-        path.line_to(point_in_circle(c, outer_radius - teeth_length, a));
+        angle += teeth_bottom_gap;
+        path.line_to(point_in_circle(float_center, outer_radius - teeth_length, angle));
 
         alpha += delta;
     }
@@ -172,26 +172,26 @@ fn chain_ring(
     let teeth_bottom_gap = 0.70 * delta;
 
     alpha = PI / 2.0;
-    for i in 0..5 {
-        let mut a = alpha - delta / 2.0 + teeth_bottom_gap / 2.0;
-        let v = point_in_circle(c, inner_radius, a);
-        if i == 0 {
-            path.move_to(v);
+    for big_tooth_index in 0..5 {
+        let mut angle = alpha - delta / 2.0 + teeth_bottom_gap / 2.0;
+        let tip = point_in_circle(float_center, inner_radius, angle);
+        if big_tooth_index == 0 {
+            path.move_to(tip);
         } else {
-            path.line_to(v);
+            path.line_to(tip);
         }
-        let middle = a + (delta - teeth_bottom_gap) / 2.0;
-        a += delta - teeth_bottom_gap;
+        let middle = angle + (delta - teeth_bottom_gap) / 2.0;
+        angle += delta - teeth_bottom_gap;
         path.cubic_to(
-            point_in_circle(c, inner_radius - teeth_length * 1.33, middle),
-            point_in_circle(c, inner_radius - teeth_length * 1.33, middle),
-            point_in_circle(c, inner_radius, a),
+            point_in_circle(float_center, inner_radius - teeth_length * 1.33, middle),
+            point_in_circle(float_center, inner_radius - teeth_length * 1.33, middle),
+            point_in_circle(float_center, inner_radius, angle),
         );
-        a += teeth_bottom_gap;
+        angle += teeth_bottom_gap;
         path.cubic_to(
-            point_in_circle(c, inner_radius * 1.05, a - teeth_bottom_gap * 0.67),
-            point_in_circle(c, inner_radius * 1.05, a - teeth_bottom_gap * 0.34),
-            point_in_circle(c, inner_radius, a),
+            point_in_circle(float_center, inner_radius * 1.05, angle - teeth_bottom_gap * 0.67),
+            point_in_circle(float_center, inner_radius * 1.05, angle - teeth_bottom_gap * 0.34),
+            point_in_circle(float_center, inner_radius, angle),
         );
 
         alpha += delta;
@@ -200,17 +200,18 @@ fn chain_ring(
 
     let bolt_radius = inner_radius * 0.81 * (delta - teeth_bottom_gap) / delta / PI;
     alpha = PI / 2.0;
-    for _i in 0..5 {
-        let c = point_in_circle(c, inner_radius + bolt_radius * 0.33, alpha);
+    // Good job at obfuscating the code, Alberto, however this is supposed to be a readable example. --Xyndra
+    for _bit_tooth_index in 0..5 {
+        let hole_center = point_in_circle(float_center, inner_radius + bolt_radius * 0.33, alpha);
         let mut a = alpha;
         for j in 0..5 {
             if j == 0 {
-                path.move_to(point_in_circle(c, bolt_radius, a));
+                path.move_to(point_in_circle(hole_center, bolt_radius, a));
             } else {
                 path.cubic_to(
-                    point_in_circle(c, bolt_radius * 1.14, a + PI / 3.0),
-                    point_in_circle(c, bolt_radius * 1.14, a + PI / 6.0),
-                    point_in_circle(c, bolt_radius, a),
+                    point_in_circle(hole_center, bolt_radius * 1.14, a + PI / 3.0),
+                    point_in_circle(hole_center, bolt_radius * 1.14, a + PI / 6.0),
+                    point_in_circle(hole_center, bolt_radius, a),
                 );
             }
             a -= PI / 2.0;
@@ -251,7 +252,6 @@ fn chain_ring(
     canvas.restore();
 }
 
-#[allow(clippy::many_single_char_names)]
 fn triangle(
     canvas: &skia_safe::canvas::Canvas,
     center: (i32, i32),
@@ -261,11 +261,11 @@ fn triangle(
     color: Color,
     wankel: bool,
 ) {
-    let c = (center.0 as f32, center.1 as f32);
-    let r = radius as f32;
-    let b = r * 0.9;
+    let float_center = (center.0 as f32, center.1 as f32);
+    let float_radius = radius as f32;
+    let inner_radius = float_radius * 0.9;
     let delta = 120.0 * DEGREES_IN_RADIANS;
-    let side = r / ((PI - delta) / 2.0).cos() * 2.0;
+    let side = float_radius / ((PI - delta) / 2.0).cos() * 2.0;
 
     let mut alpha = degrees * DEGREES_IN_RADIANS;
     let mut path = Path::new();
@@ -273,7 +273,7 @@ fn triangle(
     match vertex {
         Some(index) => {
             let a = (degrees + (120 * index) as f32) * DEGREES_IN_RADIANS;
-            let center = point_in_circle(c, r, a);
+            let center = point_in_circle(float_center, float_radius, a);
             let radii = match index {
                 0 | 2 => {
                     if wankel {
@@ -302,8 +302,8 @@ fn triangle(
             paint.set_stroke_join(PaintJoin::Bevel);
             // Highlight reflection on the top triangle edge:
             paint.set_shader(gradient_shader::radial(
-                (c.0, c.1 - 0.5 * r),
-                0.5 * r,
+                (float_center.0, float_center.1 - 0.5 * float_radius),
+                0.5 * float_radius,
                 [Color::from(0xff_ffffff), color].as_ref(),
                 None,
                 TileMode::Clamp,
@@ -313,13 +313,13 @@ fn triangle(
         }
     };
     for i in 0..4 {
-        let v = point_in_circle(c, r, alpha);
+        let v = point_in_circle(float_center, float_radius, alpha);
         if i == 0 {
             path.move_to(v);
         } else if wankel {
             path.cubic_to(
-                point_in_circle(c, b, alpha - 2.0 * delta / 3.0),
-                point_in_circle(c, b, alpha - delta / 3.0),
+                point_in_circle(float_center, inner_radius, alpha - 2.0 * delta / 3.0),
+                point_in_circle(float_center, inner_radius, alpha - delta / 3.0),
                 v,
             );
         } else {
