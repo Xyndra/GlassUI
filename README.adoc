@@ -8,7 +8,7 @@ GlassUI basically tries to reproduce the look of the https://hyprland.org/hall_o
 - [ ] Replacing the taskbar (and add a lot more features)
 - [ ] Making window transparency settable
 - [ ] Creating custom desktop backgrounds
-- [ ] Creating a Minecraft-like resource pack manager which can replace the frontend
+- [.line-through]#Creating a Minecraft-like resource pack manager which can replace the frontend# (Impossible because of change from tauri to native rendering, afaik)
 - [ ] Add optional screen effects (for example a beating depending on the music)
 - [ ] Replacing the start and search menu
 - [ ] Replacing the file explorer
@@ -19,8 +19,16 @@ GlassUI basically tries to reproduce the look of the https://hyprland.org/hall_o
 - [ ] Replacing the default window decoration
 
 == Developing
-I am very sorry for the long compile times, but this is the dependencies fault. For me, it takes
-~20 minutes to compile the project. The library says that this should not happen because it is
-supposed to be shipped with precompiled binaries, but it does not work for me. I hope you are
-more lucky than me, but I can do absolutely nothing about it. Please complain to the skia bindings
-maintainers if you are also experiencing this issue.
+For the UI library, see https://github.com/Xyndra/xyndra_winui[this repo].
+Note that the other library is supposed to be generic, so only actual UI library features should be added there.
+
+== Reasons for past decisions
+- Change from Tauri to Skia: Tauri lagging way too much to create 4 windows that
+    are always active
+- Change from Skia to my own library:
+    . Compiling the Skia dependency took 18 minutes
+    . Skia took 3% GPU for a single window, so it was scrapped for performance reasons
+- Making the UI library separate to the main library:
+    . I want to have a UI library that looks good while not eating all resources
+    . There should not be flowing boundaries between rendering and logic to
+        avoid bugs and make it easier to maintain
